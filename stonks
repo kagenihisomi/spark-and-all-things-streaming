@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Function to spin up all services
+up() {
+    echo "Starting services in ./kafka-stack-docker-compose"
+    (cd ./kafka-stack-docker-compose && docker-compose -f full-stack.yml up -d) &
+
+    echo "Starting services in ./spark-server"
+    (cd ./spark-server && docker-compose up -d) &
+
+    echo "Starting services in ./questdb"
+    (cd ./questdb && docker-compose up -d) &
+
+    wait
+}
+
+# Function to spin down all services
+down() {
+    echo "Stopping services in ./kafka-stack-docker-compose"
+    (cd ./kafka-stack-docker-compose && docker-compose -f full-stack.yml down) &
+
+    echo "Stopping services in ./spark-server"
+    (cd ./spark-server && docker-compose down) &
+
+    echo "Stopping services in ./questdb"
+    (cd ./questdb && docker-compose down) &
+
+    wait
+}
+# Check the first command line argument to the script
+case "$1" in
+    up)
+        up
+        ;;
+    down)
+        down
+        ;;
+    *)
+        echo "Usage: $0 {up|down}"
+        exit 1
+        ;;
+esac

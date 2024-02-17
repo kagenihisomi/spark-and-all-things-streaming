@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "spark-and-all-things-streaming"
+version = "0.1.0"
+description = ""
+authors = ["kagenihisomi"]
+readme = "README.md"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+pyspark = {extras = ["connect", "pandas-on-spark", "sql"], version = "^3.5.0"}
+findspark = "^2.0.1"
+ipykernel = "^6.26.0"
+
+locust = "^2.18.1"
+locust-plugins = {extras = ["kafka"], version = "^4.2.0"}
+pyodbc = "^5.1.0"

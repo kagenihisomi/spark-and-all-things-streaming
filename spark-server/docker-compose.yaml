@@ -1,0 +1,47 @@
+
+version: '2'
+
+services:
+  spark-connect:
+    image: docker.io/bitnami/spark:3.5
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_USER=spark
+    ports:
+      - '4040:4040'  # Spark UI port
+      - '8085:8080'  # Spark Master port
+      - '15002:15002'  # Spark Connect port (if using default)
+    volumes:
+      - ./files/:/files/
+      - ./lake/spark-warehouse/:/opt/bitnami/spark/spark-warehouse/  # Maps the data directory
+      - ./lake/checkpoint/:/opt/bitnami/spark/checkpoint/  # Maps the checkpoint directory
+    command: >
+      /bin/bash -c "
+      pip install grpcio-status pyspark[connect] &&
+      ./sbin/start-connect-server.sh --packages org.postgresql:postgresql:42.5.1,org.apache.spark:spark-connect_2.12:3.5.0,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,io.delta:delta-spark_2.12:3.1.0 --conf "spark.sql.warehouse.dir=/opt/bitnami/spark/spark-warehouse" --conf 'spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog' --conf 'spark.databricks.delta.autoCompact.enabled=true' --conf 'spark.databricks.delta.autoCompact.minNumFiles=10'      "
+
+  spark-thrift:
+    image: docker.io/bitnami/spark:3.5
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_USER=spark
+    ports:
+      - '5000:10000'  # Spark Thrift Server port
+      - '5001:10001'  # Spark Thrift Server port
+    volumes:
+      - ./files/:/files/
+      - ./lake/spark-warehouse/:/opt/bitnami/spark/spark-warehouse/  # Maps the data directory
+      - ./lake/checkpoint/:/opt/bitnami/spark/checkpoint/  # Maps the checkpoint directory
+    command: 
+      - /bin/bash
+      - -c
+      - | 
+        ./sbin/start-thriftserver.sh --hiveconf hive.server2.transport.mode=http --hiveconf hive.server2.thrift.http.port=10001 --packages io.delta:delta-spark_2.12:3.1.0 --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog"

@@ -1,0 +1,12 @@
+
+version: '2'
+
+services:
+  questdb:
+    image: questdb/questdb:7.3.9
+    ports:
+      - 9000:9000
+      - 8812:8812
+    volumes:
+      - ./questdb:/var/lib/questdb
+
