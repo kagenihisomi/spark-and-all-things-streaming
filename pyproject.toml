@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "spark-and-all-things-streaming"
+description = "Some streaming related stuff"
+name = "my_streaming"
 version = "0.1.0"
-description = ""
 authors = ["kagenihisomi"]
 readme = "README.md"
 
@@ -16,5 +16,18 @@ findspark = "^2.0.1"
 ipykernel = "^6.26.0"
 
 locust = "^2.18.1"
-locust-plugins = {extras = ["kafka"], version = "^4.2.0"}
+locust-plugins = {extras = ["dashboards","kafka"], version = "^4.3.4"}
 pyodbc = "^5.1.0"
+kafka-python = "^2.0.2"
+python-dotenv = "^1.0.1"
+asyncio = "^3.4.3"
+aioboto3 = "^12.3.0"
+
+# Dependabot
+pyarrow = ">=14.0.1"
+
+[tool.poetry.group.aws]
+optional = true
+[tool.poetry.group.aws.dependencies]
+aws-msk-iam-sasl-signer-python = "^1.0.1"
+awswrangler = "^3.7.1"
