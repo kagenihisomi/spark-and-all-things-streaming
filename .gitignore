@@ -175,3 +175,7 @@ spark-server/files/**
 
 
 questdb/questdb/**
+
+.python-version
+
+spark-warehouse/
